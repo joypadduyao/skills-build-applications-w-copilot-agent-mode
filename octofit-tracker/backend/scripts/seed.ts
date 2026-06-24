@@ -1,5 +1,5 @@
 import dotenv from 'dotenv'
-import mongoose from 'mongoose'
+import { connectDB, disconnectDB } from '../src/database'
 import { Workout } from '../src/models/workout'
 
 dotenv.config()
@@ -14,7 +14,7 @@ const sampleWorkouts = [
 
 async function seed() {
   try {
-    await mongoose.connect(MONGO_URI)
+    await connectDB(MONGO_URI)
     console.log('Connected to MongoDB:', MONGO_URI)
 
     // Clear existing workouts
@@ -24,7 +24,7 @@ async function seed() {
     const inserted = await Workout.insertMany(sampleWorkouts)
     console.log(`Inserted ${inserted.length} workouts`)
 
-    await mongoose.connection.close()
+    await disconnectDB()
     console.log('Disconnected from MongoDB')
     process.exit(0)
   } catch (err) {
