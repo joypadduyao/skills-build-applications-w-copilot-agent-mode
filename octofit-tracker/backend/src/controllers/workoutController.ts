@@ -6,8 +6,12 @@ export async function createWorkout(req: Request, res: Response) {
     const payload = req.body
     const workout = await workoutService.createWorkout(payload)
     res.status(201).json(workout)
-  } catch (err) {
+  } catch (err: any) {
     console.error(err)
+    // Handle Mongoose validation errors as 400 (client error)
+    if (err && err.name === 'ValidationError') {
+      return res.status(400).json({ error: 'Validation failed', details: err.errors })
+    }
     res.status(500).json({ error: 'Failed to create workout' })
   }
 }
@@ -41,8 +45,12 @@ export async function updateWorkout(req: Request, res: Response) {
     const updated = await workoutService.updateWorkout(id, payload)
     if (!updated) return res.status(404).json({ error: 'Workout not found' })
     res.json(updated)
-  } catch (err) {
+  } catch (err: any) {
     console.error(err)
+    // Handle validation errors from Mongoose
+    if (err && err.name === 'ValidationError') {
+      return res.status(400).json({ error: 'Validation failed', details: err.errors })
+    }
     res.status(500).json({ error: 'Failed to update workout' })
   }
 }

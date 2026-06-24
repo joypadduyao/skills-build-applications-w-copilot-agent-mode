@@ -17,7 +17,15 @@ export async function getWorkoutById(id: string) {
 
 export async function updateWorkout(id: string, payload: Partial<IWorkout>) {
   if (!Types.ObjectId.isValid(id)) return null
-  return await Workout.findByIdAndUpdate(id, payload, { new: true }).exec()
+  // Whitelist allowed fields to prevent accidental overwrites
+  const allowed: Array<keyof IWorkout> = ['title', 'description', 'durationMinutes', 'date']
+  const update: Partial<IWorkout> = {}
+  for (const k of allowed) {
+    if (Object.prototype.hasOwnProperty.call(payload, k) && payload[k] !== undefined) {
+      update[k] = payload[k]
+    }
+  }
+  return await Workout.findByIdAndUpdate(id, update, { new: true, runValidators: true }).exec()
 }
 
 export async function deleteWorkout(id: string) {
