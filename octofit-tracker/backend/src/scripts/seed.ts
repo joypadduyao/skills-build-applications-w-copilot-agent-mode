@@ -2,14 +2,25 @@
 /*
   Seed script for OctoFit backend (moved to src/scripts)
 
-  Usage:
-    - from octofit-tracker/backend:
-      npm run seed
+  Purpose:
+  - Populate the workouts collection with example data for local development and testing.
+  - WARNING: This script is destructive for the workouts collection — it deletes existing workout documents before inserting sample data. Do NOT run this against a production database.
 
-  Behavior:
-    - Connects to MongoDB (MONGO_URI or mongodb://localhost:27017/octofit_db)
-    - Clears the workouts collection and inserts 3 sample workouts
-    - Logs progress and exits
+  Usage:
+  - From the octofit-tracker/backend directory:
+      npm run seed
+  - Or run directly with ts-node:
+      npx ts-node src/scripts/seed.ts
+
+  Environment:
+  - The script reads MONGO_URI from process.env (dotenv is loaded). Default: mongodb://localhost:27017/octofit_db
+  - To use a custom DB, set MONGO_URI in a .env file or the environment.
+
+  Behavior & Output:
+  - Connects to MongoDB (MONGO_URI or default)
+  - Deletes all documents in the workouts collection
+  - Inserts 3 sample workouts
+  - Logs the connection URI, number of inserted documents, and any errors, then disconnects and exits
 */
 
 import dotenv from 'dotenv'
@@ -31,7 +42,7 @@ async function seed() {
     await connectDB(MONGO_URI)
     console.log('Connected to MongoDB:', MONGO_URI)
 
-    // Clear existing workouts
+    // Clear existing workouts (destructive)
     await Workout.deleteMany({})
     console.log('Cleared existing workouts')
 
