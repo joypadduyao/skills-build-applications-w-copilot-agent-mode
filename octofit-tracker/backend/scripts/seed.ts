@@ -1,10 +1,10 @@
 import dotenv from 'dotenv'
-import { connectDB, disconnectDB } from '../src/database'
+import { connectDB, disconnectDB } from '../src/config/database'
 import { Workout } from '../src/models/workout'
 
 dotenv.config()
 
-const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/octofit'
+const MONGO_URI = process.env.MONGO_URI || 'mongodb://localhost:27017/octofit_db'
 
 const sampleWorkouts = [
   { title: 'Morning Run', description: '5km easy run', durationMinutes: 30, date: new Date() },
